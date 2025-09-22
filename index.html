@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hong Kong Map Points</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div id="sidebar">
+        <div id="userSection">
+            <input type="text" id="usernameInput" placeholder="Your name" value="Anonymous">
+        </div>
+        
+        <h3>Add Point</h3>
+        <form id="pointForm" style="display:none;">
+            <select id="categorySelect">
+                <option value="restaurant">🍽️ Restaurant</option>
+                <option value="attraction">🏛️ Attraction</option>
+                <option value="shopping">🛍️ Shopping</option>
+                <option value="transport">🚇 Transport</option>
+                <option value="other">📍 Other</option>
+            </select>
+            <input type="text" id="tagInput" placeholder="Title" required>
+            <textarea id="commentInput" placeholder="Comment (optional)"></textarea>
+            <button type="submit">Add Point</button>
+            <button type="button" id="cancelBtn">Cancel</button>
+        </form>
+        
+        <div id="shareSection">
+            <h3>Share Points</h3>
+            <button id="exportBtn">📤 Export Points</button>
+            <button id="importBtn">📥 Import Points</button>
+            <input type="file" id="fileInput" accept=".json" style="display:none;">
+        </div>
+        
+        <div id="filterSection">
+            <h3>Filter</h3>
+            <select id="categoryFilter">
+                <option value="all">All Categories</option>
+                <option value="restaurant">🍽️ Restaurant</option>
+                <option value="attraction">🏛️ Attraction</option>
+                <option value="shopping">🛍️ Shopping</option>
+                <option value="transport">🚇 Transport</option>
+                <option value="other">📍 Other</option>
+            </select>
+        </div>
+        
+        <div id="pointsList">
+            <h3>Points (<span id="pointCount">0</span>)</h3>
+            <div id="points"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

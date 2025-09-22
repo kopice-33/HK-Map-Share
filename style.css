@@ -1,0 +1,200 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+}
+
+#map {
+    flex: 1;
+    height: 100vh;
+}
+
+#sidebar {
+    width: 320px;
+    padding: 20px;
+    background: #f5f5f5;
+    overflow-y: auto;
+    height: 100vh;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+#pointForm input, #pointForm textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#pointForm button {
+    width: 100%;
+    padding: 10px;
+    background: #007cba;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+#pointForm button:hover {
+    background: #005a8b;
+}
+
+#cancelBtn {
+    background: #666 !important;
+}
+
+#cancelBtn:hover {
+    background: #444 !important;
+}
+
+#shareSection button, #filterSection select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#shareSection button {
+    background: #28a745;
+    color: white;
+    border: none;
+}
+
+#shareSection button:hover {
+    background: #218838;
+}
+
+.point-item {
+    background: white;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 4px solid #007cba;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+
+.point-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.point-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.point-icon {
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+.point-tag {
+    font-weight: bold;
+    color: #007cba;
+    flex: 1;
+}
+
+.point-comment {
+    margin: 5px 0;
+    color: #666;
+    line-height: 1.4;
+}
+
+.point-meta {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.delete-btn-small {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn-small:hover {
+    background: #c82333;
+}
+
+.instruction {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+/* Popup styles */
+.popup-content {
+    min-width: 200px;
+}
+
+.popup-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.popup-icon {
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.popup-comment {
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.popup-meta {
+    margin: 8px 0;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+}
+
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.delete-btn:hover {
+    background: #c82333;
+}
+
+h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+#userSection {
+    margin-bottom: 20px;
+}
+
+#usernameInput {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
