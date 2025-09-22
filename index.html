@@ -22,12 +22,29 @@
                 <option value="attraction">🏛️ Attraction</option>
                 <option value="shopping">🛍️ Shopping</option>
                 <option value="transport">🚇 Transport</option>
-                <option value="other">📍 Other</option>
+                <option value="other" selected>📍 Other</option>
             </select>
             <input type="text" id="tagInput" placeholder="Title" required>
             <textarea id="commentInput" placeholder="Comment (optional)"></textarea>
+            <input type="file" id="pictureInput" accept="image/*" multiple>
             <button type="submit">Add Point</button>
             <button type="button" id="cancelBtn">Cancel</button>
+        </form>
+        
+        <h3>Edit Point</h3>
+        <form id="editForm" style="display:none;">
+            <select id="editCategorySelect">
+                <option value="restaurant">🍽️ Restaurant</option>
+                <option value="attraction">🏛️ Attraction</option>
+                <option value="shopping">🛍️ Shopping</option>
+                <option value="transport">🚇 Transport</option>
+                <option value="other">📍 Other</option>
+            </select>
+            <input type="text" id="editTagInput" placeholder="Title" required>
+            <textarea id="editCommentInput" placeholder="Comment (optional)"></textarea>
+            <input type="file" id="editPictureInput" accept="image/*" multiple>
+            <button type="submit">Update Point</button>
+            <button type="button" id="editCancelBtn">Cancel</button>
         </form>
         
         <div id="shareSection">

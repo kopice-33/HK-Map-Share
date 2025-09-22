@@ -12,6 +12,7 @@ let markers = [];
 let selectedLocation = null;
 let currentFilter = 'all';
 let tempMarker = null;
+let editingPointId = null;
 
 // Category icons
 const categoryIcons = {
@@ -39,7 +40,7 @@ map.on('click', function(e) {
 });
 
 // Handle form submission
-document.getElementById('pointForm').addEventListener('submit', function(e) {
+document.getElementById('pointForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     
     if (!selectedLocation) return;
@@ -48,6 +49,24 @@ document.getElementById('pointForm').addEventListener('submit', function(e) {
     const category = document.getElementById('categorySelect').value;
     const tag = document.getElementById('tagInput').value;
     const comment = document.getElementById('commentInput').value;
+    const pictureFiles = document.getElementById('pictureInput').files;
+    
+    // Convert pictures to base64
+    const pictures = [];
+    for (let i = 0; i < pictureFiles.length; i++) {
+        const file = pictureFiles[i];
+        const reader = new FileReader();
+        await new Promise((resolve) => {
+            reader.onload = function(e) {
+                pictures.push({
+                    name: file.name,
+                    data: e.target.result
+                });
+                resolve();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
     
     const point = {
         id: Date.now(),
@@ -57,7 +76,8 @@ document.getElementById('pointForm').addEventListener('submit', function(e) {
         tag: tag,
         comment: comment,
         username: username,
-        timestamp: new Date().toLocaleString()
+        timestamp: new Date().toLocaleString(),
+        pictures: pictures
     };
     
     points.push(point);
@@ -74,6 +94,7 @@ document.getElementById('pointForm').addEventListener('submit', function(e) {
     
     document.getElementById('tagInput').value = '';
     document.getElementById('commentInput').value = '';
+    document.getElementById('pictureInput').value = '';
     document.getElementById('pointForm').style.display = 'none';
     selectedLocation = null;
 });
@@ -88,6 +109,7 @@ document.getElementById('cancelBtn').addEventListener('click', function() {
     
     document.getElementById('tagInput').value = '';
     document.getElementById('commentInput').value = '';
+    document.getElementById('pictureInput').value = '';
     document.getElementById('pointForm').style.display = 'none';
     selectedLocation = null;
 });
@@ -147,10 +169,89 @@ document.getElementById('categoryFilter').addEventListener('change', function(e)
     updateMarkersVisibility();
 });
 
+// Edit form submission
+document.getElementById('editForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (!editingPointId) return;
+    
+    const category = document.getElementById('editCategorySelect').value;
+    const tag = document.getElementById('editTagInput').value;
+    const comment = document.getElementById('editCommentInput').value;
+    const pictureFiles = document.getElementById('editPictureInput').files;
+    
+    // Find the point to edit
+    const pointIndex = points.findIndex(p => p.id === editingPointId);
+    if (pointIndex === -1) return;
+    
+    // Convert new pictures to base64
+    const newPictures = [];
+    for (let i = 0; i < pictureFiles.length; i++) {
+        const file = pictureFiles[i];
+        const reader = new FileReader();
+        await new Promise((resolve) => {
+            reader.onload = function(e) {
+                newPictures.push({
+                    name: file.name,
+                    data: e.target.result
+                });
+                resolve();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+    
+    // Update point data
+    points[pointIndex].category = category;
+    points[pointIndex].tag = tag;
+    points[pointIndex].comment = comment;
+    if (newPictures.length > 0) {
+        points[pointIndex].pictures = [...(points[pointIndex].pictures || []), ...newPictures];
+    }
+    
+    localStorage.setItem('hkMapPoints', JSON.stringify(points));
+    
+    // Update marker
+    const markerIndex = markers.findIndex(m => m.pointData.id === editingPointId);
+    if (markerIndex !== -1) {
+        map.removeLayer(markers[markerIndex]);
+        markers.splice(markerIndex, 1);
+        addMarkerToMap(points[pointIndex]);
+    }
+    
+    updatePointsList();
+    
+    // Reset form
+    document.getElementById('editTagInput').value = '';
+    document.getElementById('editCommentInput').value = '';
+    document.getElementById('editPictureInput').value = '';
+    document.getElementById('editForm').style.display = 'none';
+    editingPointId = null;
+});
+
+// Edit cancel button
+document.getElementById('editCancelBtn').addEventListener('click', function() {
+    document.getElementById('editTagInput').value = '';
+    document.getElementById('editCommentInput').value = '';
+    document.getElementById('editPictureInput').value = '';
+    document.getElementById('editForm').style.display = 'none';
+    editingPointId = null;
+});
+
 // Add marker to map
 function addMarkerToMap(point) {
     const icon = categoryIcons[point.category] || '📍';
     const marker = L.marker([point.lat, point.lng]).addTo(map);
+    
+    let picturesHtml = '';
+    if (point.pictures && point.pictures.length > 0) {
+        picturesHtml = '<div class="popup-pictures">';
+        point.pictures.forEach(pic => {
+            picturesHtml += `<img src="${pic.data}" alt="${pic.name}" class="popup-image"/>`;
+        });
+        picturesHtml += '</div>';
+    }
+    
     marker.bindPopup(`
         <div class="popup-content">
             <div class="popup-header">
@@ -158,9 +259,11 @@ function addMarkerToMap(point) {
                 <strong>${point.tag}</strong>
             </div>
             <div class="popup-comment">${point.comment}</div>
+            ${picturesHtml}
             <div class="popup-meta">
                 <small>By: ${point.username} | ${point.timestamp}</small>
             </div>
+            <button onclick="editPoint(${point.id})" class="edit-btn">✏️ Edit</button>
             <button onclick="deletePoint(${point.id})" class="delete-btn">🗑️ Delete</button>
         </div>
     `);
@@ -179,19 +282,29 @@ function updatePointsList() {
         const icon = categoryIcons[point.category] || '📍';
         const div = document.createElement('div');
         div.className = 'point-item';
+        
+        let picturesHtml = '';
+        if (point.pictures && point.pictures.length > 0) {
+            picturesHtml = `<div class="point-pictures">${point.pictures.length} 📷</div>`;
+        }
+        
         div.innerHTML = `
             <div class="point-header">
                 <span class="point-icon">${icon}</span>
                 <div class="point-tag">${point.tag}</div>
-                <button onclick="deletePoint(${point.id})" class="delete-btn-small">×</button>
+                <div>
+                    <button onclick="editPoint(${point.id})" class="edit-btn-small">✏️</button>
+                    <button onclick="deletePoint(${point.id})" class="delete-btn-small">×</button>
+                </div>
             </div>
             <div class="point-comment">${point.comment}</div>
+            ${picturesHtml}
             <div class="point-meta">
                 <small>By: ${point.username} | ${point.timestamp}</small>
             </div>
         `;
         div.onclick = (e) => {
-            if (!e.target.classList.contains('delete-btn-small')) {
+            if (!e.target.classList.contains('delete-btn-small') && !e.target.classList.contains('edit-btn-small')) {
                 map.setView([point.lat, point.lng], 15);
             }
         };
@@ -213,6 +326,19 @@ function updateMarkersVisibility() {
     });
 }
 
+// Edit point function
+function editPoint(pointId) {
+    const point = points.find(p => p.id === pointId);
+    if (!point) return;
+    
+    editingPointId = pointId;
+    document.getElementById('editCategorySelect').value = point.category;
+    document.getElementById('editTagInput').value = point.tag;
+    document.getElementById('editCommentInput').value = point.comment || '';
+    document.getElementById('editForm').style.display = 'block';
+    document.getElementById('pointForm').style.display = 'none';
+}
+
 // Delete point function
 function deletePoint(pointId) {
     if (confirm('Are you sure you want to delete this point?')) {
@@ -229,6 +355,18 @@ function deletePoint(pointId) {
         updatePointsList();
     }
 }
+
+// Sidebar click handler to cancel point selection
+document.getElementById('sidebar').addEventListener('click', function() {
+    if (tempMarker) {
+        map.removeLayer(tempMarker);
+        tempMarker = null;
+    }
+    document.getElementById('pointForm').style.display = 'none';
+    document.getElementById('editForm').style.display = 'none';
+    selectedLocation = null;
+    editingPointId = null;
+});
 
 // Load existing points on page load
 points.forEach(point => addMarkerToMap(point));
