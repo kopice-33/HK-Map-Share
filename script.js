@@ -577,6 +577,7 @@ function updateRoutesList() {
                 <span class="route-icon">🛣️</span>
                 <div class="route-name">${route.name}</div>
                 <div>
+                    <div onclick="cycleRouteColor(${route.id})" style="width:20px;height:20px;background:${route.color || 'blue'};border:1px solid #ccc;cursor:pointer;display:inline-block;margin-right:5px;"></div>
                     <button onclick="editRoute(${route.id})" class="edit-btn-small">✏️</button>
                     <button onclick="expandRoute(${route.id})" class="expand-btn">🔽</button>
                     <button onclick="toggleRoute(${route.id})" class="toggle-btn">👁️</button>
@@ -631,9 +632,12 @@ function toggleRoute(routeId) {
         
         // Add polyline
         const coords = route.points.map(point => [point.lat, point.lng]);
-        const polyline = L.polyline(coords, {color: 'blue', weight: 3}).addTo(map);
+        const routeColor = route.color || 'blue';
+        const polyline = L.polyline(coords, {color: routeColor, weight: 3}).addTo(map);
         polyline.routeId = routeId;
         polyline.bindPopup(`Route: ${route.name}<br>${route.description || ''}`);
+        
+
         
         // Add markers only for new points (not existing points)
         const newMarkers = [];
@@ -658,6 +662,31 @@ function updateRouteToggleButton(routeId, isVisible) {
         button.innerHTML = isVisible ? '🙈' : '👁️';
         button.style.background = isVisible ? '#dc3545' : '#28a745';
     }
+}
+
+// Cycle route color automatically
+function cycleRouteColor(routeId) {
+    const route = routes.find(r => r.id === routeId);
+    if (!route) return;
+    
+    const colors = ['blue', 'red', 'green', 'purple', 'orange', 'cyan', 'darkgreen', 'darkblue'];
+    const currentColor = route.color || 'blue';
+    const currentIndex = colors.indexOf(currentColor);
+    const nextIndex = (currentIndex + 1) % colors.length;
+    
+    route.color = colors[nextIndex];
+    localStorage.setItem('hkMapRoutes', JSON.stringify(routes));
+    
+    // Update polyline color if visible
+    if (visibleRoutes.has(routeId)) {
+        map.eachLayer(layer => {
+            if (layer.routeId === routeId && layer.setStyle) {
+                layer.setStyle({color: route.color});
+            }
+        });
+    }
+    
+    updateRoutesList();
 }
 
 // Edit route
