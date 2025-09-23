@@ -1,63 +1,84 @@
 # HK Map Share
 
-A collaborative Hong Kong map application where users can add points of interest with comments and share them with others.
+A comprehensive Hong Kong map application for managing points of interest and routes with advanced sharing capabilities.
 
 ## Features
 
-- 🗺️ Interactive Hong Kong map using Leaflet
-- 📍 Click to add points with categories (Restaurant, Attraction, Shopping, Transport, Other)
-- 💬 Add comments and set your username
-- 🏷️ Filter points by category
-- 📤 Export/Import points as JSON files
-- 🗑️ Delete points you've added
-- 🔄 Real-time sharing (when server mode is enabled)
+### 🗺️ Interactive Map
+- Interactive Hong Kong map using Leaflet
+- Click to add points anywhere on the map
+- 🎯 Add points by entering coordinates
+- Right-click to cancel point placement
 
-## Quick Start (Local Mode)
+### 📍 Point Management
+- 5 categories: Restaurant 🍽️, Attraction 🏛️, Shopping 🛍️, Transport 🚇, Other 📍
+- Add comments and pictures to points
+- Edit existing points (category, title, comment, pictures)
+- Delete points with confirmation
+- Filter points by category
+- Click points to zoom to location
 
-1. Open `index.html` in your web browser
-2. Click anywhere on the map to add a point
-3. Fill in the details and submit
-4. Use the sidebar to filter, export, or import points
+### 🛣️ Route Creation
+- Create custom routes by connecting points
+- Left-click to add waypoints or create new route points
+- Right-click to remove points from route
+- Edit route names and descriptions
+- Edit individual route points
+- 8 route colors: blue, red, green, purple, orange, cyan, darkgreen, darkblue
+- Click color square to cycle through colors
+- Show/hide routes on map
+- Expandable route point lists
 
-## Server Mode Setup (For Real-time Sharing)
+### 📤 Sharing & Data
+- Export all data as JSON files
+- Import JSON files to merge data
+- Local storage for offline functionality
+- All data persists between sessions
 
-1. Install Node.js dependencies:
-```bash
-npm install
-```
+## Quick Start
 
-2. Start the server:
-```bash
-npm start
-```
+1. **Open `index.html`** in your web browser
+2. **Add points**: Click map or use "🎯 Add by Coordinates"
+3. **Create routes**: Use "🛣️ Start Route" and click points
+4. **Share data**: Use Export/Import buttons
 
-3. Update `script.js` to use the enhanced version:
-   - Replace the script tag in `index.html` to use `script-enhanced.js`
-   - Set `USE_SERVER = true` in the script
+## Usage Guide
 
-4. Open `http://localhost:3000` in multiple browsers to test sharing
+### Adding Points
+- **Map click**: Click anywhere on map → fill form → submit
+- **Coordinates**: Click "🎯 Add by Coordinates" → enter lat,lng → fill form
+- **Pictures**: Select multiple images when adding/editing points
 
-## Usage
+### Creating Routes
+1. Click "🛣️ Start Route"
+2. Left-click existing points or empty areas to add to route
+3. Right-click to remove points from route
+4. Enter route name and description
+5. Click "✅ Finish Route"
 
-- **Add Point**: Click anywhere on the map, fill the form, and submit
-- **View Point**: Click on markers or sidebar items to view details
-- **Filter**: Use the category dropdown to filter points
-- **Export**: Download all points as a JSON file
-- **Import**: Upload a JSON file to merge points
-- **Delete**: Use the delete button on points you want to remove
+### Managing Routes
+- **Change color**: Click colored square next to route name
+- **Edit route**: Click ✏️ button to edit name/description
+- **Edit points**: Click route points in expanded list
+- **Show/hide**: Click 👁️ button to toggle route visibility
+- **Expand**: Click 🔽 to see all route points
+
+### Sharing Data
+- **Export**: Download JSON file with all points and routes
+- **Import**: Upload JSON file to merge with existing data
+- Share JSON files with others for collaboration
 
 ## File Structure
 
 - `index.html` - Main application page
-- `script.js` - Client-side JavaScript (local mode)
-- `script-enhanced.js` - Enhanced version with server support
+- `script.js` - Complete application logic
 - `style.css` - Application styles
-- `server.js` - Node.js server for real-time sharing
-- `package.json` - Node.js dependencies
+- `README.md` - This documentation
 
 ## Technologies Used
 
-- Leaflet.js for interactive maps
-- OpenStreetMap for map tiles
-- Node.js + Express for server (optional)
-- Local Storage for offline functionality
+- **Leaflet.js** - Interactive maps
+- **OpenStreetMap** - Map tiles
+- **Local Storage** - Data persistence
+- **File API** - Picture uploads and JSON import/export
+- **Pure JavaScript** - No frameworks required
