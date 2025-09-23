@@ -577,6 +577,7 @@ function updateRoutesList() {
                 <span class="route-icon">🛣️</span>
                 <div class="route-name">${route.name}</div>
                 <div>
+                    <button onclick="editRoute(${route.id})" class="edit-btn-small">✏️</button>
                     <button onclick="expandRoute(${route.id})" class="expand-btn">🔽</button>
                     <button onclick="toggleRoute(${route.id})" class="toggle-btn">👁️</button>
                     <button onclick="deleteRoute(${route.id})" class="delete-btn-small">×</button>
@@ -656,6 +657,25 @@ function updateRouteToggleButton(routeId, isVisible) {
     if (button) {
         button.innerHTML = isVisible ? '🙈' : '👁️';
         button.style.background = isVisible ? '#dc3545' : '#28a745';
+    }
+}
+
+// Edit route
+function editRoute(routeId) {
+    const route = routes.find(r => r.id === routeId);
+    if (!route) return;
+    
+    const newName = prompt('Edit route name:', route.name);
+    if (newName !== null && newName.trim() !== '') {
+        route.name = newName.trim();
+        
+        const newDesc = prompt('Edit route description:', route.description || '');
+        if (newDesc !== null) {
+            route.description = newDesc.trim();
+        }
+        
+        localStorage.setItem('hkMapRoutes', JSON.stringify(routes));
+        updateRoutesList();
     }
 }
 
@@ -834,16 +854,21 @@ function editRoutePoint(routeId, pointIndex) {
         // Edit existing waypoint
         editPoint(point.pointId);
     } else {
-        // Switch to manage tab
-        switchTab('manage');
-        
-        // Edit route point
-        editingPointId = { routeId, pointIndex, isRoutePoint: true };
-        document.getElementById('editCategorySelect').value = 'other';
-        document.getElementById('editTagInput').value = point.name;
-        document.getElementById('editCommentInput').value = '';
-        document.getElementById('editForm').style.display = 'block';
-        document.getElementById('pointForm').style.display = 'none';
+        // Edit route point - only name, no comment needed
+        const newName = prompt('Edit route point name:', point.name);
+        if (newName !== null && newName.trim() !== '') {
+            route.points[pointIndex].name = newName.trim();
+            localStorage.setItem('hkMapRoutes', JSON.stringify(routes));
+            
+            // Stay on routes tab and preserve expanded state
+            const wasExpanded = document.getElementById(`routePoints-${routeId}`).style.display === 'block';
+            updateRoutesList();
+            if (wasExpanded) {
+                document.getElementById(`routePoints-${routeId}`).style.display = 'block';
+                document.querySelector(`button[onclick="expandRoute(${routeId})"]`).innerHTML = '🔼';
+            }
+        }
+        return;
     }
 }
 
