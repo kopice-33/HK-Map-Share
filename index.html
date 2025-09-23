@@ -15,60 +15,90 @@
             <input type="text" id="usernameInput" placeholder="Your name" value="Anonymous">
         </div>
         
-        <h3>Add Point</h3>
-        <form id="pointForm" style="display:none;">
-            <select id="categorySelect">
-                <option value="restaurant">🍽️ Restaurant</option>
-                <option value="attraction">🏛️ Attraction</option>
-                <option value="shopping">🛍️ Shopping</option>
-                <option value="transport">🚇 Transport</option>
-                <option value="other" selected>📍 Other</option>
-            </select>
-            <input type="text" id="tagInput" placeholder="Title" required>
-            <textarea id="commentInput" placeholder="Comment (optional)"></textarea>
-            <input type="file" id="pictureInput" accept="image/*" multiple>
-            <button type="submit">Add Point</button>
-            <button type="button" id="cancelBtn">Cancel</button>
-        </form>
-        
-        <h3>Edit Point</h3>
-        <form id="editForm" style="display:none;">
-            <select id="editCategorySelect">
-                <option value="restaurant">🍽️ Restaurant</option>
-                <option value="attraction">🏛️ Attraction</option>
-                <option value="shopping">🛍️ Shopping</option>
-                <option value="transport">🚇 Transport</option>
-                <option value="other">📍 Other</option>
-            </select>
-            <input type="text" id="editTagInput" placeholder="Title" required>
-            <textarea id="editCommentInput" placeholder="Comment (optional)"></textarea>
-            <input type="file" id="editPictureInput" accept="image/*" multiple>
-            <button type="submit">Update Point</button>
-            <button type="button" id="editCancelBtn">Cancel</button>
-        </form>
-        
-        <div id="shareSection">
-            <h3>Share Points</h3>
-            <button id="exportBtn">📤 Export Points</button>
-            <button id="importBtn">📥 Import Points</button>
-            <input type="file" id="fileInput" accept=".json" style="display:none;">
+        <div id="tabs">
+            <button class="tab-btn active" onclick="switchTab('manage')">📝 Manage</button>
+            <button class="tab-btn" onclick="switchTab('points')">📍 Points</button>
+            <button class="tab-btn" onclick="switchTab('routes')">🛣️ Routes</button>
         </div>
         
-        <div id="filterSection">
-            <h3>Filter</h3>
-            <select id="categoryFilter">
-                <option value="all">All Categories</option>
-                <option value="restaurant">🍽️ Restaurant</option>
-                <option value="attraction">🏛️ Attraction</option>
-                <option value="shopping">🛍️ Shopping</option>
-                <option value="transport">🚇 Transport</option>
-                <option value="other">📍 Other</option>
-            </select>
+        <div id="manageTab" class="tab-content">
+            <h3>Add Point</h3>
+            <form id="pointForm" style="display:none;">
+                <select id="categorySelect">
+                    <option value="restaurant">🍽️ Restaurant</option>
+                    <option value="attraction">🏛️ Attraction</option>
+                    <option value="shopping">🛍️ Shopping</option>
+                    <option value="transport">🚇 Transport</option>
+                    <option value="other" selected>📍 Other</option>
+                </select>
+                <input type="text" id="tagInput" placeholder="Title" required>
+                <textarea id="commentInput" placeholder="Comment (optional)"></textarea>
+                <input type="file" id="pictureInput" accept="image/*" multiple>
+                <button type="submit">Add Point</button>
+                <button type="button" id="cancelBtn">Cancel</button>
+            </form>
+            
+            <h3>Edit Point</h3>
+            <form id="editForm" style="display:none;">
+                <select id="editCategorySelect">
+                    <option value="restaurant">🍽️ Restaurant</option>
+                    <option value="attraction">🏛️ Attraction</option>
+                    <option value="shopping">🛍️ Shopping</option>
+                    <option value="transport">🚇 Transport</option>
+                    <option value="other">📍 Other</option>
+                </select>
+                <input type="text" id="editTagInput" placeholder="Title" required>
+                <textarea id="editCommentInput" placeholder="Comment (optional)"></textarea>
+                <input type="file" id="editPictureInput" accept="image/*" multiple>
+                <button type="submit">Update Point</button>
+                <button type="button" id="editCancelBtn">Cancel</button>
+            </form>
+            
+            <div id="routeSection">
+                <h3>Add Route</h3>
+                <button id="startRouteBtn">🛣️ Start Route</button>
+                <button id="finishRouteBtn" style="display:none;">✅ Finish Route</button>
+                <button id="cancelRouteBtn" style="display:none;">❌ Cancel Route</button>
+                <div id="routeInfo" style="display:none;">
+                    <input type="text" id="routeNameInput" placeholder="Route name" required>
+                    <textarea id="routeDescInput" placeholder="Route description (optional)"></textarea>
+                    <div id="routePoints">Points: <span id="routePointCount">0</span></div>
+                    <div id="routePointsList"></div>
+                </div>
+            </div>
+            
+            <div id="shareSection">
+                <h3>Share Points</h3>
+                <button id="exportBtn">📤 Export Points</button>
+                <button id="importBtn">📥 Import Points</button>
+                <input type="file" id="fileInput" accept=".json" style="display:none;">
+            </div>
         </div>
         
-        <div id="pointsList">
-            <h3>Points (<span id="pointCount">0</span>)</h3>
-            <div id="points"></div>
+        <div id="pointsTab" class="tab-content" style="display:none;">
+            <div id="filterSection">
+                <h3>Filter</h3>
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="restaurant">🍽️ Restaurant</option>
+                    <option value="attraction">🏛️ Attraction</option>
+                    <option value="shopping">🛍️ Shopping</option>
+                    <option value="transport">🚇 Transport</option>
+                    <option value="other">📍 Other</option>
+                </select>
+            </div>
+            
+            <div id="pointsList">
+                <h3>Points (<span id="pointCount">0</span>)</h3>
+                <div id="points"></div>
+            </div>
+        </div>
+        
+        <div id="routesTab" class="tab-content" style="display:none;">
+            <div id="routesList">
+                <h3>Routes (<span id="routeCount">0</span>)</h3>
+                <div id="routes"></div>
+            </div>
         </div>
     </div>
 
