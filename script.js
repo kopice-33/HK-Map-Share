@@ -266,6 +266,40 @@ document.getElementById('pointForm').addEventListener('submit', async function(e
     selectedLocation = null;
 });
 
+// Add by coordinates button
+document.getElementById('addByCoordinatesBtn').addEventListener('click', function() {
+    const coordInput = prompt('Enter coordinates (latitude, longitude):\nExample: 22.3193, 114.1694');
+    if (!coordInput) return;
+    
+    const coords = coordInput.split(',').map(c => parseFloat(c.trim()));
+    if (coords.length !== 2 || isNaN(coords[0]) || isNaN(coords[1])) {
+        alert('Invalid coordinates format. Please use: latitude, longitude');
+        return;
+    }
+    
+    const [lat, lng] = coords;
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        alert('Invalid coordinate values. Latitude: -90 to 90, Longitude: -180 to 180');
+        return;
+    }
+    
+    selectedLocation = { lat, lng };
+    
+    // Remove previous temp marker
+    if (tempMarker) {
+        map.removeLayer(tempMarker);
+    }
+    
+    // Add temporary marker
+    tempMarker = L.marker([lat, lng]).addTo(map);
+    tempMarker.bindPopup('Click "Add Point" to save this location').openPopup();
+    
+    // Center map on the coordinates
+    map.setView([lat, lng], 15);
+    
+    document.getElementById('pointForm').style.display = 'block';
+});
+
 // Cancel button
 document.getElementById('cancelBtn').addEventListener('click', function() {
     // Remove temp marker
