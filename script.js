@@ -728,7 +728,7 @@ function updatePointsList() {
         `;
         div.onclick = (e) => {
             if (!e.target.classList.contains('delete-btn-small') && !e.target.classList.contains('edit-btn-small')) {
-                map.setView([point.lat, point.lng], 15);
+                map.setView([point.lat, point.lng], 19);
             }
         };
         pointsDiv.appendChild(div);
@@ -753,6 +753,9 @@ function updateMarkersVisibility() {
 function editPoint(pointId) {
     const point = points.find(p => p.id === pointId);
     if (!point) return;
+    
+    // Switch to manage tab
+    switchTab('manage');
     
     editingPointId = pointId;
     document.getElementById('editCategorySelect').value = point.category;
