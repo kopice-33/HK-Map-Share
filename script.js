@@ -347,46 +347,57 @@ document.getElementById('editForm').addEventListener('submit', async function(e)
     const comment = document.getElementById('editCommentInput').value;
     const pictureFiles = document.getElementById('editPictureInput').files;
     
-    // Find the point to edit
-    const pointIndex = points.findIndex(p => p.id === editingPointId);
-    if (pointIndex === -1) return;
-    
-    // Convert new pictures to base64
-    const newPictures = [];
-    for (let i = 0; i < pictureFiles.length; i++) {
-        const file = pictureFiles[i];
-        const reader = new FileReader();
-        await new Promise((resolve) => {
-            reader.onload = function(e) {
-                newPictures.push({
-                    name: file.name,
-                    data: e.target.result
-                });
-                resolve();
-            };
-            reader.readAsDataURL(file);
-        });
+    // Check if editing route point
+    if (typeof editingPointId === 'object' && editingPointId.isRoutePoint) {
+        const { routeId, pointIndex } = editingPointId;
+        const route = routes.find(r => r.id === routeId);
+        if (route) {
+            route.points[pointIndex].name = tag;
+            localStorage.setItem('hkMapRoutes', JSON.stringify(routes));
+            updateRoutesList();
+        }
+    } else {
+        // Find the point to edit
+        const pointIndex = points.findIndex(p => p.id === editingPointId);
+        if (pointIndex === -1) return;
+        
+        // Convert new pictures to base64
+        const newPictures = [];
+        for (let i = 0; i < pictureFiles.length; i++) {
+            const file = pictureFiles[i];
+            const reader = new FileReader();
+            await new Promise((resolve) => {
+                reader.onload = function(e) {
+                    newPictures.push({
+                        name: file.name,
+                        data: e.target.result
+                    });
+                    resolve();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Update point data
+        points[pointIndex].category = category;
+        points[pointIndex].tag = tag;
+        points[pointIndex].comment = comment;
+        if (newPictures.length > 0) {
+            points[pointIndex].pictures = [...(points[pointIndex].pictures || []), ...newPictures];
+        }
+        
+        localStorage.setItem('hkMapPoints', JSON.stringify(points));
+        
+        // Update marker
+        const markerIndex = markers.findIndex(m => m.pointData.id === editingPointId);
+        if (markerIndex !== -1) {
+            map.removeLayer(markers[markerIndex]);
+            markers.splice(markerIndex, 1);
+            addMarkerToMap(points[pointIndex]);
+        }
+        
+        updatePointsList();
     }
-    
-    // Update point data
-    points[pointIndex].category = category;
-    points[pointIndex].tag = tag;
-    points[pointIndex].comment = comment;
-    if (newPictures.length > 0) {
-        points[pointIndex].pictures = [...(points[pointIndex].pictures || []), ...newPictures];
-    }
-    
-    localStorage.setItem('hkMapPoints', JSON.stringify(points));
-    
-    // Update marker
-    const markerIndex = markers.findIndex(m => m.pointData.id === editingPointId);
-    if (markerIndex !== -1) {
-        map.removeLayer(markers[markerIndex]);
-        markers.splice(markerIndex, 1);
-        addMarkerToMap(points[pointIndex]);
-    }
-    
-    updatePointsList();
     
     // Reset form
     document.getElementById('editTagInput').value = '';
@@ -566,6 +577,7 @@ function updateRoutesList() {
                 <span class="route-icon">🛣️</span>
                 <div class="route-name">${route.name}</div>
                 <div>
+                    <button onclick="expandRoute(${route.id})" class="expand-btn">🔽</button>
                     <button onclick="toggleRoute(${route.id})" class="toggle-btn">👁️</button>
                     <button onclick="deleteRoute(${route.id})" class="delete-btn-small">×</button>
                 </div>
@@ -573,6 +585,12 @@ function updateRoutesList() {
             <div class="route-desc">${route.description || 'No description'}</div>
             <div class="route-meta">
                 <small>${route.points.length} points | By: ${route.username} | ${route.timestamp}</small>
+            </div>
+            <div id="routePoints-${route.id}" class="route-points-list" style="display:none;">
+                ${route.points.map((point, index) => {
+                    const icon = point.type === 'waypoint' ? '📍' : '🔴';
+                    return `<div class="route-point-item" data-route-id="${route.id}" data-point-index="${index}">${index + 1}. ${icon} ${point.name}</div>`;
+                }).join('')}
             </div>
         `;
         routesDiv.appendChild(div);
@@ -790,6 +808,54 @@ function switchTab(tabName) {
     event.target.classList.add('active');
     document.getElementById(tabName + 'Tab').style.display = 'block';
 }
+
+// Expand/collapse route points list
+function expandRoute(routeId) {
+    const pointsList = document.getElementById(`routePoints-${routeId}`);
+    const expandBtn = document.querySelector(`button[onclick="expandRoute(${routeId})"]`);
+    
+    if (pointsList.style.display === 'none') {
+        pointsList.style.display = 'block';
+        expandBtn.innerHTML = '🔼';
+    } else {
+        pointsList.style.display = 'none';
+        expandBtn.innerHTML = '🔽';
+    }
+}
+
+// Edit route point (both waypoints and route points)
+function editRoutePoint(routeId, pointIndex) {
+    const route = routes.find(r => r.id === routeId);
+    if (!route) return;
+    
+    const point = route.points[pointIndex];
+    
+    if (point.pointId) {
+        // Edit existing waypoint
+        editPoint(point.pointId);
+    } else {
+        // Switch to manage tab
+        switchTab('manage');
+        
+        // Edit route point
+        editingPointId = { routeId, pointIndex, isRoutePoint: true };
+        document.getElementById('editCategorySelect').value = 'other';
+        document.getElementById('editTagInput').value = point.name;
+        document.getElementById('editCommentInput').value = '';
+        document.getElementById('editForm').style.display = 'block';
+        document.getElementById('pointForm').style.display = 'none';
+    }
+}
+
+// Route point click handler
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('route-point-item')) {
+        e.stopPropagation();
+        const routeId = parseInt(e.target.dataset.routeId);
+        const pointIndex = parseInt(e.target.dataset.pointIndex);
+        editRoutePoint(routeId, pointIndex);
+    }
+});
 
 // Sidebar click handler to cancel point selection
 document.getElementById('sidebar').addEventListener('click', function(e) {
