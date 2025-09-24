@@ -36,6 +36,26 @@ map.on('click', function(e) {
         return;
     }
     
+    // Check if clicked on existing marker
+    let clickedOnMarker = false;
+    markers.forEach(marker => {
+        const markerPos = marker.getLatLng();
+        const distance = map.distance(e.latlng, markerPos);
+        if (distance < 20) {
+            clickedOnMarker = true;
+        }
+    });
+    
+    // If clicked on existing marker, don't add temp marker
+    if (clickedOnMarker) {
+        if (tempMarker) {
+            map.removeLayer(tempMarker);
+            tempMarker = null;
+        }
+        document.getElementById('pointForm').style.display = 'none';
+        return;
+    }
+    
     selectedLocation = e.latlng;
     
     // Remove previous temp marker
@@ -791,6 +811,16 @@ function addMarkerToMap(point) {
             <button onclick="deletePoint(${point.id})" class="delete-btn">🗑️ Delete</button>
         </div>
     `);
+    
+    // Add click handler to clean up temp marker when clicking on existing points
+    marker.on('click', function() {
+        if (tempMarker) {
+            map.removeLayer(tempMarker);
+            tempMarker = null;
+        }
+        document.getElementById('pointForm').style.display = 'none';
+    });
+    
     marker.pointData = point;
     markers.push(marker);
 }
