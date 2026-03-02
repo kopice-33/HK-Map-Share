@@ -82,3 +82,6 @@ A comprehensive Hong Kong map application for managing points of interest and ro
 - **Local Storage** - Data persistence
 - **File API** - Picture uploads and JSON import/export
 - **Pure JavaScript** - No frameworks required
+
+## Demonstration Video
+https://youtu.be/EaeLtLnJSL0
