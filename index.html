@@ -29,8 +29,12 @@
         </div>
         
         <div class="mode-indicator" id="modeIndicator">
-            <span id="modeText">Draw Line</span> Mode
+            <span id="modeText">Line Mode</span>
             <span class="shortcut">(Press R to switch)</span>
+        </div>
+        
+        <div class="distance-display" id="distanceDisplay">
+            0 km
         </div>
         
         <div class="action-buttons">
@@ -46,14 +50,13 @@
         <div id="map"></div>
         <div class="info-panel" id="infoPanel">
             <div class="tool-instructions">
-                <strong>✏️ Mode: <span id="modeDisplay">Draw Line</span></strong><br>
+                <strong>✏️ Controls:</strong><br>
+                • <span>First right click</span> - Set start point (🏁)<br>
+                • <span>Right click + drag</span> - Free draw<br>
+                • <span>Left click</span> - Add point (straight/road)<br>
                 • <span>R</span> - Switch mode<br>
-                • <span>E</span> - Finish route<br>
-                • <span>Ctrl+Z</span> - Undo<br>
-                • <span>Ctrl+Y</span> - Redo<br>
-                • <span>Left click</span> - Add point<br>
-                • <span>Right click</span> - Start free draw<br>
-                • <span>Drag points</span> - Edit
+                • <span>E</span> - Finish free draw<br>
+                • <span>Ctrl+Z/Y</span> - Undo/Redo
             </div>
         </div>
     </div>
