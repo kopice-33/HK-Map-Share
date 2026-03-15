@@ -3,107 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hong Kong Map Points</title>
+    <title>🇭🇰 HK Hike Recorder - Smart Drawing</title>
+    
+    <!-- Leaflet core -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Routing for road following -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    
+    <!-- GPX import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/togpx@0.5.4/togpx.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/togeojson/0.16.0/togeojson.min.js"></script>
+    
+    <!-- Custom styles -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="map"></div>
-    
-    <div id="sidebar">
-        <div id="userSection">
-            <input type="text" id="usernameInput" placeholder="Your name" value="Anonymous">
+    <div class="app-header">
+        <div class="logo-area">
+            <div class="logo-icon">🥾</div>
+            <span>HK Hike Recorder</span>
         </div>
         
-        <div id="tabs">
-            <button class="tab-btn active" onclick="switchTab('manage')">📝 Manage</button>
-            <button class="tab-btn" onclick="switchTab('points')">📍 Points</button>
-            <button class="tab-btn" onclick="switchTab('routes')">🛣️ Routes</button>
+        <div class="mode-indicator" id="modeIndicator">
+            <span id="modeText">Draw Line</span> Mode
+            <span class="shortcut">(Press R to switch)</span>
         </div>
         
-        <div id="manageTab" class="tab-content">
-            <h3>Add Point</h3>
-            <button id="addByCoordinatesBtn">🎯 Add by Coordinates</button>
-            <form id="pointForm" style="display:none;">
-                <select id="categorySelect">
-                    <option value="restaurant">🍽️ Restaurant</option>
-                    <option value="attraction">🏛️ Attraction</option>
-                    <option value="shopping">🛍️ Shopping</option>
-                    <option value="transport">🚇 Transport</option>
-                    <option value="other" selected>📍 Other</option>
-                </select>
-                <input type="text" id="tagInput" placeholder="Title" required>
-                <textarea id="commentInput" placeholder="Comment (optional)"></textarea>
-                <input type="file" id="pictureInput" accept="image/*" multiple>
-                <button type="submit">Add Point</button>
-                <button type="button" id="cancelBtn">Cancel</button>
-            </form>
-            
-            <h3>Edit Point</h3>
-            <form id="editForm" style="display:none;">
-                <select id="editCategorySelect">
-                    <option value="restaurant">🍽️ Restaurant</option>
-                    <option value="attraction">🏛️ Attraction</option>
-                    <option value="shopping">🛍️ Shopping</option>
-                    <option value="transport">🚇 Transport</option>
-                    <option value="other">📍 Other</option>
-                </select>
-                <input type="text" id="editTagInput" placeholder="Title" required>
-                <textarea id="editCommentInput" placeholder="Comment (optional)"></textarea>
-                <input type="file" id="editPictureInput" accept="image/*" multiple>
-                <button type="submit">Update Point</button>
-                <button type="button" id="editCancelBtn">Cancel</button>
-            </form>
-            
-            <div id="routeSection">
-                <h3>Add Route</h3>
-                <button id="startRouteBtn">🛣️ Start Route</button>
-                <button id="finishRouteBtn" style="display:none;">✅ Finish Route</button>
-                <button id="cancelRouteBtn" style="display:none;">❌ Cancel Route</button>
-                <div id="routeInfo" style="display:none;">
-                    <input type="text" id="routeNameInput" placeholder="Route name">
-                    <textarea id="routeDescInput" placeholder="Route description (optional)"></textarea>
-                    <div id="routePoints">Points: <span id="routePointCount">0</span></div>
-                    <div id="routePointsList"></div>
-                </div>
-            </div>
-            
-            <div id="shareSection">
-                <h3>Share Points</h3>
-                <button id="exportBtn">📤 Export Points</button>
-                <button id="importBtn">📥 Import Points</button>
-                <input type="file" id="fileInput" accept=".json" style="display:none;">
-            </div>
+        <div class="action-buttons">
+            <button id="undoBtn" title="Undo (Ctrl+Z)">↩️ Undo</button>
+            <button id="redoBtn" title="Redo (Ctrl+Y)">↪️ Redo</button>
+            <button id="importBtn" title="Import GPX">📂 Import</button>
+            <button id="exportBtn" title="Export GPX">📥 Export</button>
+            <button id="clearBtn" class="clear-btn">🗑️ Clear</button>
         </div>
-        
-        <div id="pointsTab" class="tab-content" style="display:none;">
-            <div id="filterSection">
-                <h3>Filter</h3>
-                <select id="categoryFilter">
-                    <option value="all">All Categories</option>
-                    <option value="restaurant">🍽️ Restaurant</option>
-                    <option value="attraction">🏛️ Attraction</option>
-                    <option value="shopping">🛍️ Shopping</option>
-                    <option value="transport">🚇 Transport</option>
-                    <option value="other">📍 Other</option>
-                </select>
-            </div>
-            
-            <div id="pointsList">
-                <h3>Points (<span id="pointCount">0</span>)</h3>
-                <div id="points"></div>
-            </div>
-        </div>
-        
-        <div id="routesTab" class="tab-content" style="display:none;">
-            <div id="routesList">
-                <h3>Routes (<span id="routeCount">0</span>)</h3>
-                <div id="routes"></div>
+    </div>
+
+    <div id="map-container">
+        <div id="map"></div>
+        <div class="info-panel" id="infoPanel">
+            <div class="tool-instructions">
+                <strong>✏️ Mode: <span id="modeDisplay">Draw Line</span></strong><br>
+                • <span>R</span> - Switch mode<br>
+                • <span>E</span> - Finish route<br>
+                • <span>Ctrl+Z</span> - Undo<br>
+                • <span>Ctrl+Y</span> - Redo<br>
+                • <span>Left click</span> - Add point<br>
+                • <span>Right click</span> - Start free draw<br>
+                • <span>Drag points</span> - Edit
             </div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Hidden file input for import -->
+    <input type="file" id="gpxImport" accept=".gpx,.xml" style="display: none">
+
     <script src="script.js"></script>
 </body>
 </html>

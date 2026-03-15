@@ -1,427 +1,177 @@
-body {
+* {
     margin: 0;
-    font-family: Arial, sans-serif;
+    padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+}
+
+body {
     display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+        background: #1a2a33;
+}
+
+.app-header {
+    background: #1e2b38;
+    color: white;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+        z-index: 10;
+        flex-wrap: wrap;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.logo-icon {
+    background: #3d8c40;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.mode-indicator {
+    background: #2a3f4a;
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    border: 1px solid #4f7a8c;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.mode-indicator span {
+    font-weight: 700;
+    color: #ffb570;
+}
+
+.shortcut {
+    color: #9bb7c9;
+    font-size: 0.8rem;
+    margin-left: 8px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+        flex-wrap: wrap;
+}
+
+.action-buttons button {
+    background: #2f4555;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+        border-radius: 30px;
+        font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+        font-size: 0.85rem;
+        border: 1px solid #4d6679;
+        transition: 0.15s;
+}
+
+.action-buttons button:hover {
+    background: #3d5a6e;
+    border-color: #6b8da0;
+}
+
+.clear-btn {
+    background: #6d3a3a !important;
+    border-color: #a55e5e !important;
+}
+
+.clear-btn:hover {
+    background: #8a4848 !important;
+}
+
+#map-container {
+    flex: 1;
+    width: 100%;
+    position: relative;
 }
 
 #map {
-    flex: 1;
-    height: 100vh;
-}
-
-#sidebar {
-    width: 320px;
-    padding: 20px;
-    background: #f5f5f5;
-    overflow-y: auto;
-    height: 100vh;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    box-sizing: border-box;
-}
-
-#pointForm input, #pointForm textarea {
+    height: 100%;
     width: 100%;
-    margin-bottom: 10px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    background: #1e2e3a;
 }
 
-#pointForm button {
-    width: 100%;
-    padding: 10px;
-    background: #007cba;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 5px;
+.info-panel {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(20, 30, 35, 0.95);
+    backdrop-filter: blur(8px);
+    color: #ecf3f8;
+    padding: 16px 22px;
+    border-radius: 16px;
+    border-left: 5px solid #3d8c40;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7);
+    z-index: 500;
+    border: 1px solid #3a6043;
+    max-width: 280px;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    pointer-events: none;
 }
 
-#pointForm button:hover {
-    background: #005a8b;
-}
-
-#cancelBtn {
-    background: #666 !important;
-}
-
-#cancelBtn:hover {
-    background: #444 !important;
-}
-
-#shareSection button, #filterSection select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#shareSection button {
-    background: #28a745;
-    color: white;
-    border: none;
-}
-
-#shareSection button:hover {
-    background: #218838;
-}
-
-.point-item {
-    background: white;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 4px;
-    border-left: 4px solid #007cba;
-    cursor: pointer;
-    transition: box-shadow 0.2s;
-}
-
-.point-item:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.point-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-.point-icon {
-    font-size: 16px;
-    margin-right: 8px;
-}
-
-.point-tag {
-    font-weight: bold;
-    color: #007cba;
-    flex: 1;
-}
-
-.point-comment {
-    margin: 5px 0;
-    color: #666;
-    line-height: 1.4;
-}
-
-.point-meta {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #eee;
-}
-
-.delete-btn-small {
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.delete-btn-small:hover {
-    background: #c82333;
-}
-
-.instruction {
-    text-align: center;
-    color: #666;
-    font-style: italic;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 4px;
-    margin: 10px 0;
-}
-
-/* Popup styles */
-.popup-content {
-    min-width: 200px;
-}
-
-.popup-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.popup-icon {
-    font-size: 18px;
-    margin-right: 8px;
-}
-
-.popup-comment {
-    margin: 8px 0;
-    line-height: 1.4;
-}
-
-.popup-meta {
-    margin: 8px 0;
-    padding-top: 8px;
-    border-top: 1px solid #eee;
-}
-
-.delete-btn {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-top: 8px;
-}
-
-.delete-btn:hover {
-    background: #c82333;
-}
-
-.edit-btn {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-top: 8px;
-    margin-right: 5px;
-}
-
-.edit-btn:hover {
-    background: #0056b3;
-}
-
-.edit-btn-small {
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 5px;
-}
-
-.edit-btn-small:hover {
-    background: #0056b3;
-}
-
-.point-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-.point-header > div:last-child {
-    display: flex;
-    gap: 5px;
-}
-
-#tabs {
-    display: flex;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-}
-
-.tab-btn {
-    flex: 1;
-    padding: 10px;
-    background: #f8f9fa;
-    border: none;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.tab-btn.active {
-    background: white;
-    border-bottom-color: #007cba;
-    color: #007cba;
-}
-
-.tab-btn:hover {
-    background: #e9ecef;
-}
-
-.tab-content {
-    animation: fadeIn 0.3s;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-#routeSection button {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 5px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    color: white;
-}
-
-#startRouteBtn {
-    background: #28a745;
-}
-
-#finishRouteBtn {
-    background: #007bff;
-}
-
-#cancelRouteBtn {
-    background: #dc3545;
-}
-
-#routeInfo {
-    margin-top: 10px;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 4px;
-}
-
-#routeNameInput, #routeDescInput {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-#routePoints {
-    font-size: 12px;
-    color: #666;
-}
-
-.route-item {
-    background: white;
-    margin: 10px 0;
-    padding: 10px;
-    border-radius: 4px;
-    border-left: 4px solid #007bff;
-}
-
-.route-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-.route-header > div:last-child {
-    display: flex;
-    gap: 5px;
-}
-
-.route-icon {
-    font-size: 16px;
-    margin-right: 8px;
-}
-
-.route-name {
-    font-weight: bold;
-    color: #007bff;
-    flex: 1;
-}
-
-.route-desc {
-    margin: 5px 0;
-    color: #666;
-    line-height: 1.4;
-}
-
-.route-meta {
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px solid #eee;
-}
-
-.toggle-btn {
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 5px;
-}
-
-.toggle-btn:hover {
-    background: #218838;
-}
-
-#routePointsList {
-    margin-top: 10px;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-.route-point-item {
-    padding: 5px;
-    background: #e9ecef;
+.tool-instructions span {
+    color: #9ed9a8;
+    font-weight: 600;
+    background: #2a4a33;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
     margin: 2px 0;
-    border-radius: 3px;
-    font-size: 12px;
 }
 
-h3 {
-    margin-top: 20px;
-    margin-bottom: 10px;
-    color: #333;
+.tool-instructions strong {
+    color: #ffb570;
+    font-size: 1rem;
 }
 
-#userSection {
-    margin-bottom: 20px;
+.leaflet-routing-container {
+    background: #1e2e3b !important;
+    color: #e0eefb !important;
+    border: 1px solid #3f5e72 !important;
+    border-radius: 12px !important;
+    padding: 8px !important;
+    font-size: 12px !important;
 }
 
-#usernameInput {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.leaflet-routing-alternatives-container {
+    display: none !important;
 }
 
-#pictureInput {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.waypoint-marker {
+    background: #ffaa33;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 12px !important;
+    height: 12px !important;
+    box-shadow: 0 2px 6px black;
 }
 
-.popup-pictures {
-    margin: 8px 0;
-}
-
-.popup-image {
-    max-width: 100px;
-    max-height: 80px;
-    margin: 2px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.point-pictures {
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
+.free-draw-marker {
+    background: #ff5555;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 8px !important;
+    height: 8px !important;
 }
